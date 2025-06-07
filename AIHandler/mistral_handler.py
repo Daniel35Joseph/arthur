@@ -4,7 +4,7 @@ class MistralClient:
     def __init__(self, api_key="WFwVpoCIJURbeMSQ2Q6ranxRx79NgZSp", model="open-mistral-nemo"):
         self.api_key = api_key
         self.model = model
-        self.system_prompt = "You are Arthur, an AI assistant similar to JARVIS from Iron Man. Keep responses concise and in character."
+        self.system_prompt = "You are Arthur, an AI assistant. Keep responses concise and in character. My name is Daniel Awad and you are helping me with my everyday tasks."
         self.endpoint = "https://api.mistral.ai/v1/chat/completions"
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
