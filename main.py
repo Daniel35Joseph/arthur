@@ -21,11 +21,15 @@ def main():
     speech_recognition_handler.adjust_ambient_noise(duration=1)
     tts_handler.speak("Hello, this is Arthur, how may I assist you today?")
 
+    # Start a new conversation
+    print("Starting new conversation...")
+    reply = mistral_handler.initialize_conversation()
+
     # Main loop to listen for user input
     while True:
         # Listen for user input from the microphone
         text = str(speech_recognition_handler.listen_from_microphone())
-        print(f"Me: {text}, {type(text)}")
+        print(f"Me: {text}")
 
         # Check if the user said "Arthur stop listening"
         if assistant_stop_command in text.lower():
@@ -44,8 +48,11 @@ def main():
         elif text != None and text != "" and text is not None:
             # Process the text with the Mistral AI handler
             try:
+                # Continue the conversation
+                response = mistral_handler.continue_conversation(text)
+
                 # Generate a response using the Mistral AI handler
-                response = mistral_handler.chat(text)
+                # response = mistral_handler.chat(text)
                 print(f"Arthur: {response}")
                 tts_handler.speak(response)
             except Exception as e:

@@ -1,5 +1,7 @@
 import requests
-from config import mistral_free_api_key
+# from config import mistral_free_api_key
+mistral_free_api_key = "WFwVpoCIJURbeMSQ2Q6ranxRx79NgZSp"
+assistant_stop_command = "stop your program"
 
 class MistralClient:
     """A client for interacting with the Mistral AI API."""
@@ -22,6 +24,14 @@ class MistralClient:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
+        self.conversation_history = []
+        self.initialize_conversation()
+
+    def initialize_conversation(self):
+        """Initialize or reset the conversation history"""
+        self.conversation_history = [
+            {"role": "system", "content": self.system_prompt}
+        ]
 
     def chat(self, user_message):
         """Generates a response from the Mistral AI based on the user's message.
@@ -51,10 +61,64 @@ class MistralClient:
         else:
             # Raise an exception if the API request fails
             raise Exception(f"API Error {response.status_code}: {response.text}")
+
+    def generate_response(self, user_input, continue_conversation=True):
+        """Generate a response while optionally maintaining conversation context"""
+        # Add user message to history
+        self.conversation_history.append({"role": "user", "content": user_input})
         
+        payload = {
+            "model": self.model,
+            "messages": self.conversation_history
+        }
+
+        response = requests.post(
+            self.endpoint, 
+            headers=self.headers, 
+            json=payload
+        )
+        
+        if response.status_code == 200:
+            assistant_response = response.json()["choices"][0]["message"]["content"]
+            # Add assistant's response to history if continuing conversation
+            if continue_conversation:
+                self.conversation_history.append(
+                    {"role": "assistant", "content": assistant_response}
+                )
+            return assistant_response
+        else:
+            raise Exception(f"API Error {response.status_code}: {response.text}")
+
+    def new_conversation(self, initial_message):
+        """Start a new conversation with an initial message"""
+        self.initialize_conversation()
+        return self.generate_response(initial_message)
+
+    def continue_conversation(self, user_message):
+        """Continue existing conversation with a new message"""
+        return self.generate_response(user_message)
+
+    def get_conversation_history(self):
+        """Return the current conversation history"""
+        return self.conversation_history
+
 if __name__ == "__main__":
     """Entry point for testing the MistralClient."""
     # Test the MistralClient by sending a sample message
     mistral = MistralClient()
     reply = mistral.chat("What can you help me with today?")
     print(reply)
+
+# Example usage
+if __name__ == "__main__":
+    # Initialize the client
+    mistral = MistralClient()
+    
+    # Start a new conversation
+    print("Starting new conversation...")
+    reply = mistral.initialize_conversation()
+    print("AI:", reply)
+    
+    # Continue the conversation
+    reply = mistral.continue_conversation("Can you help me with Python programming?")
+    print("AI:", reply)
