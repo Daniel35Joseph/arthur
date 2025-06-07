@@ -1,29 +1,19 @@
-import speech_recognition as sr
+from sppech_recognition_handler import SpeechRecognitionHandler
 
 def main():
-    recognizer = sr.Recognizer()
-    microphone = sr.Microphone()
+    speech_recognition_handler = SpeechRecognitionHandler()
+    print("Welcome to the Speech Recognition Program!")
 
     print("Adjusting for ambient noise... Please wait.")
-    with microphone as source:
-        recognizer.adjust_for_ambient_noise(source)
+    speech_recognition_handler.adjust_ambient_noise(duration=1)
 
     while True:
-        print("Listening...")
-        with microphone as source:
-            audio = recognizer.listen(source)
-
-        try:
-            print("Recognizing speech...")
-            text = recognizer.recognize_google(audio)
-            print(f"You said: {text}")
-            if "arthur stop listening" in text.lower():
-                print("Stopping the program.")
-                break
-        except sr.UnknownValueError:
-            print("Sorry, could not understand the audio.")
-        except sr.RequestError as e:
-            print(f"Could not request results from Google Speech Recognition service; {e}")
+        
+        print("Recognizing speech...")
+        text = speech_recognition_handler.listen_from_microphone()
+        if "arthur stop listening" in text.lower():
+            print("Stopping the program.")
+            break
 
 if __name__ == "__main__":
     main()
