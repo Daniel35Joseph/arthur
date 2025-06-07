@@ -1,10 +1,12 @@
 import speech_recognition as sr
+from SpeechGeneration.ttsx3_handler import TTSHandler
 from typing import Optional
 
 class SpeechRecognitionHandler:
     def __init__(self):
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
+        self.tts_handler = TTSHandler()
 
     def listen_from_microphone(self, timeout: int = None, phrase_time_limit: int = None) -> Optional[str]:
         """
@@ -12,7 +14,6 @@ class SpeechRecognitionHandler:
         """
         try:
             with self.microphone as source:
-                self.recognizer.adjust_for_ambient_noise(source)
                 print("Listening...")
                 audio = self.recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
                 
