@@ -10,7 +10,8 @@ def main():
     while True:
         
         print("Recognizing speech...")
-        text = speech_recognition_handler.listen_from_microphone()
+        text = str(speech_recognition_handler.listen_from_microphone())
+        print(text)
         if "arthur stop listening" in text.lower():
             print("Stopping the program.")
             break
