@@ -6,10 +6,10 @@ def main():
     speech_recognition_handler = SpeechRecognitionHandler()
     tts_handler = TTSHandler()
     print("Welcome to the Speech Recognition Program!")
-    tts_handler.speak("Welcome to the Speech Recognition Program!")
 
     print("Adjusting for ambient noise... Please wait.")
     tts_handler.speak("Adjusting for ambient noise. Please wait.")
+    tts_handler.speak("Hello, this is Arthur, how may I assist you today?")
     speech_recognition_handler.adjust_ambient_noise(duration=1)
 
     while True:
